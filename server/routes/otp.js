@@ -8,6 +8,10 @@ function generateOtp() {
   return String(Math.floor(100000 + Math.random() * 900000))
 }
 
+function getMsg91FlowId() {
+  return process.env.MSG91_FLOW_ID || process.env.SMS_TEMPLATE_ID
+}
+
 router.post('/send', async (request, response) => {
   const { mobile, countryCode } = request.body
 
@@ -19,25 +23,25 @@ router.post('/send', async (request, response) => {
   const fullPhone = `${countryCode}${mobile}`
 
   try {
-    if (
-      process.env.MSG91_AUTH_KEY &&
-      process.env.MSG91_TEMPLATE_ID &&
-      process.env.MSG91_SENDER_ID
-    ) {
-      console.log('MSG91_TEMPLATE_ID:', process.env.MSG91_TEMPLATE_ID)
-      console.log('MSG91_SENDER_ID:', process.env.MSG91_SENDER_ID)
+    if (process.env.MSG91_AUTH_KEY && getMsg91FlowId()) {
+      console.log('MSG91_FLOW_ID:', getMsg91FlowId())
 
       const msg91Response = await axios.post(
-        'https://control.msg91.com/api/v5/otp',
+        'https://control.msg91.com/api/v5/flow',
         {
-          template_id: process.env.MSG91_TEMPLATE_ID,
-          mobile: fullPhone.replace('+', ''),
-          authkey: process.env.MSG91_AUTH_KEY,
-          otp,
-          sender: process.env.MSG91_SENDER_ID,
+          flow_id: getMsg91FlowId(),
+          recipients: [
+            {
+              mobiles: fullPhone.replace('+', ''),
+              OTP: otp,
+              Validity: '5',
+            },
+          ],
         },
         {
           headers: {
+            accept: 'application/json',
+            authkey: process.env.MSG91_AUTH_KEY,
             'Content-Type': 'application/json',
           },
         },
@@ -47,7 +51,7 @@ router.post('/send', async (request, response) => {
 
       if (
         msg91Response.data?.type === 'error' ||
-        msg91Response.data?.message?.includes('Template ID')
+        msg91Response.data?.message?.toLowerCase?.().includes('flow id')
       ) {
         return response.status(500).json({
           message: 'Failed to send OTP.',
@@ -56,7 +60,7 @@ router.post('/send', async (request, response) => {
       }
     } else {
       return response.status(500).json({
-        message: 'MSG91 credentials are incomplete. Add auth key, template id, and sender id.',
+        message: 'MSG91 credentials are incomplete. Add auth key and flow id.',
       })
     }
 
