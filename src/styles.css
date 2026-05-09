@@ -67,8 +67,29 @@ textarea {
 .event-panel {
   color: #ffffff;
   font-family: 'Inter', sans-serif;
-  padding: 10px 6px 10px 0;
+  padding: 70px 18px 10px 0;
+  max-height: calc(100vh - 80px);
+  overflow-y: auto;
   animation: rise 800ms ease-out;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
+}
+
+.mobile-header {
+  display: none;
+}
+
+.desktop-only {
+  display: block;
+}
+
+.event-panel::-webkit-scrollbar {
+  width: 6px;
+}
+
+.event-panel::-webkit-scrollbar-thumb {
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.2);
 }
 
 .hero-logo {
@@ -82,9 +103,9 @@ textarea {
 }
 
 .eyebrow {
-  margin: 0 0 12px;
+  margin: 0 0 10px;
   color: #ffd86b;
-  font-size: 0.95rem;
+  font-size: 0.85rem;
   font-weight: 600;
   letter-spacing: 0.14em;
   text-transform: uppercase;
@@ -92,8 +113,8 @@ textarea {
 }
 
 .event-panel h1 {
-  margin: 0 0 16px;
-  font-size: clamp(2.4rem, 5vw, 4.2rem);
+  margin: 0 0 14px;
+  font-size: clamp(2.2rem, 4.5vw, 3.8rem);
   font-weight: 500;
   line-height: 1.05;
   letter-spacing: -0.02em;
@@ -101,31 +122,75 @@ textarea {
 }
 
 .event-lead {
-  margin: 0 0 20px;
-  max-width: 52ch;
-  font-size: 1.12rem;
+  margin: 0 0 14px;
+  max-width: 54ch;
+  font-size: 1rem;
   font-weight: 400;
-  line-height: 1.55;
-  color: rgba(255, 255, 255, 0.96);
-  text-shadow: 0 1px 6px rgba(0, 0, 0, 0.5);
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.92);
+  text-shadow: 0 1px 5px rgba(0, 0, 0, 0.45);
+}
+
+.event-body {
+  margin-top: 14px;
+  padding: 18px;
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: linear-gradient(180deg, rgba(7, 17, 31, 0.28), rgba(7, 17, 31, 0.42));
+  backdrop-filter: blur(8px);
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: start;
+  gap: 16px;
+}
+
+.event-body > .event-section,
+.event-body > .event-card {
+  margin: 0;
+  padding: 0;
+  border: none;
+  background: transparent;
+  backdrop-filter: none;
+}
+
+.event-section h2,
+.event-card h2 {
+  margin: 0 0 8px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(255, 216, 107, 0.95);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.event-section h2::before,
+.event-card h2::before {
+  content: '';
+  display: block;
+  width: 16px;
+  height: 1.5px;
+  background: rgba(255, 216, 107, 0.7);
 }
 
 .event-highlights {
-  margin: 0 0 24px;
+  margin: 0;
   padding: 0;
   list-style: none;
   display: grid;
-  gap: 12px;
+  gap: 7px;
 }
 
 .event-highlights li {
   position: relative;
-  padding-left: 26px;
-  font-size: 1.05rem;
+  padding-left: 18px;
+  font-size: 0.88rem;
   font-weight: 400;
-  line-height: 1.5;
-  color: rgba(255, 255, 255, 0.95);
-  text-shadow: 0 1px 5px rgba(0, 0, 0, 0.45);
+  line-height: 1.4;
+  color: rgba(255, 255, 255, 0.9);
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
 }
 
 .event-highlights li::before {
@@ -134,29 +199,62 @@ textarea {
   left: 0;
   top: 0.55em;
   transform: translateY(-50%);
-  width: 8px;
-  height: 8px;
+  width: 5px;
+  height: 5px;
   border-radius: 50%;
   background: #ffd86b;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.35);
+}
+
+.event-card .event-lead {
+  margin: 0;
+  font-size: 0.88rem;
+  line-height: 1.45;
+}
+
+.event-card .event-meta {
+  gap: 4px;
+  margin: 0;
+  font-size: 0.85rem;
 }
 
 .event-meta {
   display: flex;
   flex-direction: column;
-  gap: 6px;
-  margin-top: 6px;
-  font-size: 1rem;
+  gap: 4px;
+  margin-top: 4px;
+  font-size: 0.9rem;
   font-weight: 400;
-  color: rgba(255, 255, 255, 0.9);
-  text-shadow: 0 1px 5px rgba(0, 0, 0, 0.45);
+  color: rgba(255, 255, 255, 0.88);
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
 }
 
 .event-meta strong {
   color: #ffd86b;
   font-weight: 600;
-  font-size: 1.1rem;
-  text-shadow: 0 1px 6px rgba(0, 0, 0, 0.5);
+  font-size: 0.92rem;
+  text-shadow: 0 1px 5px rgba(0, 0, 0, 0.45);
+}
+
+.event-closing {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-top: 18px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.event-closing strong {
+  color: #ffd86b;
+  font-weight: 600;
+  font-size: 1.05rem;
+  letter-spacing: 0.02em;
+  text-shadow: 0 1px 5px rgba(0, 0, 0, 0.45);
+}
+
+.event-closing span {
+  color: rgba(255, 255, 255, 0.75);
+  font-size: 0.88rem;
 }
 
 .hero-overlay {
@@ -548,23 +646,52 @@ th {
     grid-template-columns: 1fr;
     width: calc(100% - 20px);
     margin: 10px auto;
-    gap: 28px;
+    gap: 20px;
     padding-bottom: 24px;
   }
 
   .hero-logo {
-    height: 40px;
-    top: max(12px, env(safe-area-inset-top));
-    left: max(14px, env(safe-area-inset-left));
+    position: relative;
+    top: auto;
+    left: auto;
+    display: block;
+    margin: 12px auto 8px;
+    height: 48px;
+  }
+
+  .mobile-header {
+    display: block;
+    text-align: center;
+    order: -2;
+  }
+
+  .mobile-header .eyebrow {
+    margin: 0 0 6px;
+    font-size: 0.75rem;
+  }
+
+  .mobile-header h1 {
+    margin: 0 0 4px;
+    font-size: clamp(1.8rem, 8vw, 2.6rem);
+  }
+
+  .form-popup {
+    order: -1;
   }
 
   .event-panel {
-    padding: 52px 4px 0;
+    padding: 0 4px 10px;
     text-align: center;
-    min-height: calc(100vh - 60px);
+    max-height: none;
+    overflow-y: visible;
+    min-height: auto;
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: flex-start;
+  }
+
+  .desktop-only {
+    display: none;
   }
 
   .event-panel h1 {
@@ -573,36 +700,64 @@ th {
   }
 
   .eyebrow {
-    font-size: 0.88rem;
+    font-size: 0.82rem;
   }
 
   .event-lead {
-    font-size: 1.05rem;
-    line-height: 1.55;
-    margin: 0 auto 18px;
+    font-size: 0.96rem;
+    line-height: 1.5;
+    margin: 0 auto 14px;
+  }
+
+  .event-body {
+    grid-template-columns: 1fr;
+    padding: 14px;
+    gap: 14px;
+    margin-top: 12px;
+  }
+
+  .event-section h2,
+  .event-card h2 {
+    justify-content: center;
+    font-size: 0.7rem;
+  }
+
+  .event-section h2::before,
+  .event-card h2::before {
+    display: none;
   }
 
   .event-highlights {
-    margin: 0 auto 20px;
+    margin: 0 auto 12px;
     text-align: left;
     width: fit-content;
-    gap: 10px;
+    gap: 7px;
   }
 
   .event-highlights li {
-    font-size: 0.98rem;
-    padding-left: 24px;
+    font-size: 0.88rem;
+    padding-left: 18px;
+  }
+
+  .event-card .event-lead {
+    font-size: 0.88rem;
   }
 
   .event-meta {
     align-items: center;
-    margin-top: 10px;
-    font-size: 0.95rem;
-    gap: 5px;
+    margin-top: 6px;
+    font-size: 0.86rem;
+    gap: 3px;
   }
 
   .event-meta strong {
-    font-size: 1.05rem;
+    font-size: 0.92rem;
+  }
+
+  .event-closing {
+    align-items: center;
+    margin-top: 14px;
+    padding-top: 10px;
   }
 
   .form-popup {
