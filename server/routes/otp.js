@@ -19,19 +19,13 @@ router.post('/send', async (request, response) => {
   const fullPhone = `${countryCode}${mobile}`
 
   try {
-    if (
-      process.env.MSG91_AUTH_KEY &&
-      process.env.MSG91_TEMPLATE_ID &&
-      process.env.MSG91_SENDER_ID
-    ) {
+    if (process.env.MSG91_AUTH_KEY) {
       await axios.post(
         'https://control.msg91.com/api/v5/otp',
         {
-          template_id: process.env.MSG91_TEMPLATE_ID,
           mobile: fullPhone.replace('+', ''),
           authkey: process.env.MSG91_AUTH_KEY,
           otp,
-          sender: process.env.MSG91_SENDER_ID,
         },
         {
           headers: {
