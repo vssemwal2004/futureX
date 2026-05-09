@@ -11,6 +11,21 @@ function createCaptcha() {
   return Math.random().toString(36).slice(2, 8)
 }
 
+const bootcampHighlights = [
+  'Hands on workshops that transform curiosity into practical skills',
+  'Networking opportunities with students, professionals, and innovators',
+  'Immersive sessions on Artificial Intelligence and emerging technologies',
+  '1:1 mentorship and career guidance from industry and academic leaders',
+  '5 unforgettable days to explore your interests, passions and future goals',
+]
+
+const bootcampBenefits = [
+  'This summer, experience the future of college life',
+  'Build future ready AI and tech skills',
+  'Explore exciting career possibilities in emerging technologies',
+  'Participate completely free of cost',
+]
+
 function ApplicationFormPage() {
   const [formValues, setFormValues] = useState({
     name: '',
@@ -185,167 +200,220 @@ function ApplicationFormPage() {
       <section className="hero-banner">
         <div className="hero-overlay" />
 
-        <div className="form-popup">
-          <div className="form-header">
-            <h1>{formTitle}</h1>
-          </div>
+        <div className="hero-content">
+          <article className="event-panel">
+            <p className="eyebrow">Experience College Before College</p>
+            <h1>Future X 3.0 Bootcamp</h1>
+            <p className="event-lead">
+              Step into a world where curiosity meets innovation, ideas turn into action, and futures begin to take
+              shape. Future X 3.0 is a free 5 day immersive bootcamp designed for the brightest Class 12 students to
+              experience life at India&apos;s First Gen AI Campus.
+            </p>
+            <p className="event-lead">
+              Connect with industry experts, innovators, mentors, and like minded peers while exploring the technologies
+              shaping tomorrow.
+            </p>
 
-          <form className="bank-form" onSubmit={handleSubmit}>
-            <div className="field-row full-width">
-              <label>
-                <input name="name" value={formValues.name} onChange={handleChange} type="text" placeholder="Enter Name *" />
-              </label>
+            <div className="event-section">
+              <h2>What You Can Expect</h2>
+              <ul>
+                {bootcampHighlights.map((item) => (
+                  <li key={item}>{item}</li>
+                ))}
+              </ul>
             </div>
 
-            <div className="field-row full-width">
-              <label>
-                <input
-                  name="email"
-                  value={formValues.email}
-                  onChange={handleChange}
-                  type="email"
-                  placeholder="Enter Email Address *"
-                />
-              </label>
+            <div className="event-grid">
+              <section className="event-card">
+                <h2>Event Details</h2>
+                <p><strong>7th - 12th June 2026</strong></p>
+                <p><strong>Reporting Time:</strong> 9:00 AM</p>
+                <p><strong>Venue:</strong> Graphic Era Group of Institutions</p>
+              </section>
+
+              <section className="event-card">
+                <h2>Eligibility</h2>
+                <p>Exclusively for <strong>Class 12 Appearing &amp; Passout Students</strong></p>
+              </section>
             </div>
 
-            <div className="field-row full-width phone-row">
-              <label className="country-prefix">
-                <select name="countryCode" value={formValues.countryCode} onChange={handleChange}>
-                  <option value="+91">+91</option>
-                  <option value="+1">+1</option>
-                  <option value="+44">+44</option>
-                  <option value="+61">+61</option>
-                </select>
-              </label>
-
-              <label className="phone-input">
-                <input
-                  name="mobile"
-                  value={formValues.mobile}
-                  onChange={handleChange}
-                  type="tel"
-                  placeholder="Enter Mobile Number *"
-                />
-              </label>
+            <div className="event-section">
+              <h2>Why Join?</h2>
+              <ul>
+                {bootcampBenefits.map((item) => (
+                  <li key={item}>{item}</li>
+                ))}
+              </ul>
             </div>
 
-            <div className="field-row full-width otp-actions-row">
-              <button className="secondary-action" type="button" onClick={handleSendOtp} disabled={isSendingOtp}>
-                {isSendingOtp ? 'Sending...' : 'Send OTP'}
-              </button>
-              <div className="otp-row">
-                <input name="otp" value={formValues.otp} onChange={handleChange} type="text" placeholder="Enter OTP" />
-                <button className="verify-button" type="button" onClick={handleVerifyOtp} disabled={isVerifyingOtp}>
-                  {isVerifyingOtp ? 'Verifying' : 'Verify'}
-                </button>
+            <p className="event-closing">
+              <strong>Connect. Learn. Lead.</strong>
+              <span>Your future starts here with Future X 3.0 Bootcamp.</span>
+            </p>
+          </article>
+
+          <div className="form-popup">
+            <div className="form-header">
+              <h1>{formTitle}</h1>
+            </div>
+
+            <form className="bank-form" onSubmit={handleSubmit}>
+              <div className="field-row full-width">
+                <label>
+                  <input name="name" value={formValues.name} onChange={handleChange} type="text" placeholder="Enter Name *" />
+                </label>
               </div>
-            </div>
 
-            <label>
-              <select name="country" value={formValues.country} onChange={handleChange}>
-                <option value="">Select Country *</option>
-                {formData.countries.map((country) => (
-                  <option key={country.value} value={country.value}>
-                    {country.label}
-                  </option>
-                ))}
-              </select>
-            </label>
+              <div className="field-row full-width">
+                <label>
+                  <input
+                    name="email"
+                    value={formValues.email}
+                    onChange={handleChange}
+                    type="email"
+                    placeholder="Enter Email Address *"
+                  />
+                </label>
+              </div>
 
-            <label>
-              <select name="state" value={formValues.state} onChange={handleChange} disabled={formValues.country !== 'IN' || !states.length}>
-                <option value="">{formValues.country === 'IN' ? 'Select State *' : 'Available for India'}</option>
-                {states.map((state) => (
-                  <option key={state.value} value={state.value}>
-                    {state.label}
-                  </option>
-                ))}
-              </select>
-            </label>
+              <div className="field-row full-width phone-row">
+                <label className="country-prefix">
+                  <select name="countryCode" value={formValues.countryCode} onChange={handleChange}>
+                    <option value="+91">+91</option>
+                    <option value="+1">+1</option>
+                    <option value="+44">+44</option>
+                    <option value="+61">+61</option>
+                  </select>
+                </label>
 
-            <label>
-              <select name="district" value={formValues.district} onChange={handleChange} disabled={!districts.length}>
-                <option value="">{districts.length ? 'Select District *' : 'Select state first'}</option>
-                {districts.map((district) => (
-                  <option key={district.value} value={district.value}>
-                    {district.label}
-                  </option>
-                ))}
-              </select>
-            </label>
+                <label className="phone-input">
+                  <input
+                    name="mobile"
+                    value={formValues.mobile}
+                    onChange={handleChange}
+                    type="tel"
+                    placeholder="Enter Mobile Number *"
+                  />
+                </label>
+              </div>
 
-            <label>
-              <select name="department" value={formValues.department} onChange={handleChange}>
-                <option value="">Select Department *</option>
-                {formData.departments.map((department) => (
-                  <option key={department.value} value={department.value}>
-                    {department.label}
-                  </option>
-                ))}
-              </select>
-            </label>
+              <div className="field-row full-width otp-actions-row">
+                <button className="secondary-action" type="button" onClick={handleSendOtp} disabled={isSendingOtp}>
+                  {isSendingOtp ? 'Sending...' : 'Send OTP'}
+                </button>
+                <div className="otp-row">
+                  <input name="otp" value={formValues.otp} onChange={handleChange} type="text" placeholder="Enter OTP" />
+                  <button className="verify-button" type="button" onClick={handleVerifyOtp} disabled={isVerifyingOtp}>
+                    {isVerifyingOtp ? 'Verifying' : 'Verify'}
+                  </button>
+                </div>
+              </div>
 
-            <label>
-              <select name="level" value={formValues.level} onChange={handleChange}>
-                <option value="">Select Level *</option>
-                {formData.levels.map((level) => (
-                  <option key={level.value} value={level.value}>
-                    {level.label}
-                  </option>
-                ))}
-              </select>
-            </label>
-
-            <div className="field-row full-width">
               <label>
-                <select name="course" value={formValues.course} onChange={handleChange} disabled={!courses.length}>
-                  <option value="">{courses.length ? 'Select Course *' : 'Select department first'}</option>
-                  {courses.map((course) => (
-                    <option key={course.value} value={course.value}>
-                      {course.label}
+                <select name="country" value={formValues.country} onChange={handleChange}>
+                  <option value="">Select Country *</option>
+                  {formData.countries.map((country) => (
+                    <option key={country.value} value={country.value}>
+                      {country.label}
                     </option>
                   ))}
                 </select>
               </label>
-            </div>
 
-            <div className="field-row full-width captcha-row">
-              <div className="captcha-box">
-                <span>{captcha}</span>
-                <button className="captcha-refresh" type="button" onClick={() => setCaptcha(createCaptcha())}>
-                  Refresh
+              <label>
+                <select name="state" value={formValues.state} onChange={handleChange} disabled={formValues.country !== 'IN' || !states.length}>
+                  <option value="">{formValues.country === 'IN' ? 'Select State *' : 'Available for India'}</option>
+                  {states.map((state) => (
+                    <option key={state.value} value={state.value}>
+                      {state.label}
+                    </option>
+                  ))}
+                </select>
+              </label>
+
+              <label>
+                <select name="district" value={formValues.district} onChange={handleChange} disabled={!districts.length}>
+                  <option value="">{districts.length ? 'Select District *' : 'Select state first'}</option>
+                  {districts.map((district) => (
+                    <option key={district.value} value={district.value}>
+                      {district.label}
+                    </option>
+                  ))}
+                </select>
+              </label>
+
+              <label>
+                <select name="department" value={formValues.department} onChange={handleChange}>
+                  <option value="">Select Department *</option>
+                  {formData.departments.map((department) => (
+                    <option key={department.value} value={department.value}>
+                      {department.label}
+                    </option>
+                  ))}
+                </select>
+              </label>
+
+              <label>
+                <select name="level" value={formValues.level} onChange={handleChange}>
+                  <option value="">Select Level *</option>
+                  {formData.levels.map((level) => (
+                    <option key={level.value} value={level.value}>
+                      {level.label}
+                    </option>
+                  ))}
+                </select>
+              </label>
+
+              <div className="field-row full-width">
+                <label>
+                  <select name="course" value={formValues.course} onChange={handleChange} disabled={!courses.length}>
+                    <option value="">{courses.length ? 'Select Course *' : 'Select department first'}</option>
+                    {courses.map((course) => (
+                      <option key={course.value} value={course.value}>
+                        {course.label}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+              </div>
+
+              <div className="field-row full-width captcha-row">
+                <div className="captcha-box">
+                  <span>{captcha}</span>
+                  <button className="captcha-refresh" type="button" onClick={() => setCaptcha(createCaptcha())}>
+                    Refresh
+                  </button>
+                </div>
+                <label>
+                  <input
+                    name="captchaInput"
+                    value={formValues.captchaInput}
+                    onChange={handleChange}
+                    type="text"
+                    placeholder="Enter Captcha"
+                  />
+                </label>
+              </div>
+
+              {otpMessage ? <p className="status-message">{otpMessage}</p> : null}
+              {submitMessage ? <p className="status-message">{submitMessage}</p> : null}
+
+              <div className="full-width form-footer">
+                <label className="agree-row agree-row-single">
+                  <input
+                    name="agreedToUpdates"
+                    checked={formValues.agreedToUpdates}
+                    onChange={handleChange}
+                    type="checkbox"
+                  />
+                  <span>{formNote}</span>
+                </label>
+                <button type="submit" disabled={isSubmitting}>
+                  {isSubmitting ? 'Submitting...' : 'Submit'}
                 </button>
               </div>
-              <label>
-                <input
-                  name="captchaInput"
-                  value={formValues.captchaInput}
-                  onChange={handleChange}
-                  type="text"
-                  placeholder="Enter Captcha"
-                />
-              </label>
-            </div>
-
-            {otpMessage ? <p className="status-message">{otpMessage}</p> : null}
-            {submitMessage ? <p className="status-message">{submitMessage}</p> : null}
-
-            <div className="full-width form-footer">
-              <label className="agree-row agree-row-single">
-                <input
-                  name="agreedToUpdates"
-                  checked={formValues.agreedToUpdates}
-                  onChange={handleChange}
-                  type="checkbox"
-                />
-                <span>{formNote}</span>
-              </label>
-              <button type="submit" disabled={isSubmitting}>
-                {isSubmitting ? 'Submitting...' : 'Submit'}
-              </button>
-            </div>
-          </form>
+            </form>
+          </div>
         </div>
       </section>
     </main>
