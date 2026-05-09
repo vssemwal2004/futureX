@@ -11,21 +11,6 @@ function createCaptcha() {
   return Math.random().toString(36).slice(2, 8)
 }
 
-const bootcampHighlights = [
-  'Hands on workshops that transform curiosity into practical skills',
-  'Networking opportunities with students, professionals, and innovators',
-  'Immersive sessions on Artificial Intelligence and emerging technologies',
-  '1:1 mentorship and career guidance from industry and academic leaders',
-  '5 unforgettable days to explore your interests, passions and future goals',
-]
-
-const bootcampBenefits = [
-  'This summer, experience the future of college life',
-  'Build future ready AI and tech skills',
-  'Explore exciting career possibilities in emerging technologies',
-  'Participate completely free of cost',
-]
-
 function ApplicationFormPage() {
   const [formValues, setFormValues] = useState({
     name: '',
@@ -199,57 +184,27 @@ function ApplicationFormPage() {
     <main className="hero-shell">
       <section className="hero-banner">
         <div className="hero-overlay" />
+        <img src="/geu-logo.webp" alt="Graphic Era University" className="hero-logo" />
 
         <div className="hero-content">
           <article className="event-panel">
             <p className="eyebrow">Experience College Before College</p>
             <h1>Future X 3.0 Bootcamp</h1>
             <p className="event-lead">
-              Step into a world where curiosity meets innovation, ideas turn into action, and futures begin to take
-              shape. Future X 3.0 is a free 5 day immersive bootcamp designed for the brightest Class 12 students to
-              experience life at India&apos;s First Gen AI Campus.
-            </p>
-            <p className="event-lead">
-              Connect with industry experts, innovators, mentors, and like minded peers while exploring the technologies
-              shaping tomorrow.
+              A free 5-day immersive bootcamp for Class 12 students at India&apos;s First Gen AI Campus. 
+              Explore AI, build future-ready skills, and connect with industry leaders.
             </p>
 
-            <div className="event-section">
-              <h2>What You Can Expect</h2>
-              <ul>
-                {bootcampHighlights.map((item) => (
-                  <li key={item}>{item}</li>
-                ))}
-              </ul>
+            <ul className="event-highlights">
+              <li>Hands-on AI &amp; tech workshops</li>
+              <li>1:1 mentorship from industry experts</li>
+              <li>Networking with innovators &amp; peers</li>
+            </ul>
+
+            <div className="event-meta">
+              <p><strong>7th – 12th June 2026</strong></p>
+              <p>Graphic Era Group of Institutions</p>
             </div>
-
-            <div className="event-grid">
-              <section className="event-card">
-                <h2>Event Details</h2>
-                <p><strong>7th - 12th June 2026</strong></p>
-                <p><strong>Reporting Time:</strong> 9:00 AM</p>
-                <p><strong>Venue:</strong> Graphic Era Group of Institutions</p>
-              </section>
-
-              <section className="event-card">
-                <h2>Eligibility</h2>
-                <p>Exclusively for <strong>Class 12 Appearing &amp; Passout Students</strong></p>
-              </section>
-            </div>
-
-            <div className="event-section">
-              <h2>Why Join?</h2>
-              <ul>
-                {bootcampBenefits.map((item) => (
-                  <li key={item}>{item}</li>
-                ))}
-              </ul>
-            </div>
-
-            <p className="event-closing">
-              <strong>Connect. Learn. Lead.</strong>
-              <span>Your future starts here with Future X 3.0 Bootcamp.</span>
-            </p>
           </article>
 
           <div className="form-popup">
