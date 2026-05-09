@@ -6,6 +6,7 @@ const formTitle = import.meta.env.VITE_FORM_TITLE || 'Apply Now'
 const formNote =
   import.meta.env.VITE_FORM_NOTE ||
   'I agree to receive information regarding my submitted enquiry and future admission updates.'
+const logoUrl = `${import.meta.env.BASE_URL}geu-logo.webp`
 
 function createCaptcha() {
   return Math.random().toString(36).slice(2, 8)
@@ -184,7 +185,7 @@ function ApplicationFormPage() {
     <main className="hero-shell">
       <section className="hero-banner">
         <div className="hero-overlay" />
-        <img src="/geu-logo.webp" alt="Graphic Era University" className="hero-logo" />
+        <img src={logoUrl} alt="Graphic Era University" className="hero-logo" />
 
         <div className="hero-content">
           <article className="event-panel">
