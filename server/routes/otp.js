@@ -24,7 +24,10 @@ router.post('/send', async (request, response) => {
       process.env.MSG91_TEMPLATE_ID &&
       process.env.MSG91_SENDER_ID
     ) {
-      await axios.post(
+      console.log('MSG91_TEMPLATE_ID:', process.env.MSG91_TEMPLATE_ID)
+      console.log('MSG91_SENDER_ID:', process.env.MSG91_SENDER_ID)
+
+      const msg91Response = await axios.post(
         'https://control.msg91.com/api/v5/otp',
         {
           template_id: process.env.MSG91_TEMPLATE_ID,
@@ -39,6 +42,18 @@ router.post('/send', async (request, response) => {
           },
         },
       )
+
+      console.log('MSG91 response:', msg91Response.data)
+
+      if (
+        msg91Response.data?.type === 'error' ||
+        msg91Response.data?.message?.includes('Template ID')
+      ) {
+        return response.status(500).json({
+          message: 'Failed to send OTP.',
+          details: msg91Response.data,
+        })
+      }
     } else {
       return response.status(500).json({
         message: 'MSG91 credentials are incomplete. Add auth key, template id, and sender id.',
