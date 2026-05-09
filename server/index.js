@@ -10,10 +10,11 @@ dotenv.config()
 
 const app = express()
 const port = Number(process.env.SERVER_PORT || 4000)
+const clientOrigin = getClientOrigin(process.env.CLIENT_ORIGIN || 'http://localhost:5173')
 
 app.use(
   cors({
-    origin: process.env.CLIENT_ORIGIN || 'http://localhost:5173',
+    origin: clientOrigin,
   }),
 )
 app.use(express.json())
@@ -25,6 +26,14 @@ app.get('/api/health', (_request, response) => {
 app.use('/api/auth', authRouter)
 app.use('/api/forms', formsRouter)
 app.use('/api/otp', otpRouter)
+
+function getClientOrigin(value) {
+  try {
+    return new URL(value).origin
+  } catch {
+    return value
+  }
+}
 
 async function startServer() {
   try {
