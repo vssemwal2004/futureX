@@ -188,15 +188,76 @@ function ApplicationFormPage() {
         <img src={logoUrl} alt="Graphic Era University" className="hero-logo" />
 
         <div className="hero-content">
-          <div className="mobile-header">
+          <div className="event-header-mobile">
             <p className="eyebrow">Experience College Before College</p>
             <h1>Future X 3.0 Bootcamp</h1>
           </div>
+
+          <article className="event-panel">
+            <div className="event-panel-header">
+              <p className="eyebrow">Experience College Before College</p>
+              <h1>Future X 3.0 Bootcamp</h1>
+            </div>
+            <p className="event-lead">
+              Step into a world where curiosity meets innovation, ideas turn into action, and futures begin to take
+              shape. Future X 3.0 is a free 5 day immersive bootcamp designed for the brightest Class 12 students to
+              experience life at India&apos;s First Gen AI Campus.
+            </p>
+            <p className="event-lead">
+              Connect with industry experts, innovators, mentors, and like minded peers while exploring the
+              technologies shaping tomorrow.
+            </p>
+
+            <div className="event-body">
+              <div className="event-section">
+                <h2>What You Can Expect</h2>
+                <ul className="event-highlights">
+                  <li>Hands on workshops that transform curiosity into practical skills</li>
+                  <li>Networking opportunities with students, professionals, and innovators</li>
+                  <li>Immersive sessions on Artificial Intelligence and emerging technologies</li>
+                  <li>1:1 mentorship and career guidance from industry and academic leaders</li>
+                  <li>5 unforgettable days to explore your interests, passions and future goals</li>
+                </ul>
+              </div>
+
+              <div className="event-card">
+                <h2>Event Details</h2>
+                <div className="event-meta">
+                  <p><strong>7th - 12th June 2026</strong></p>
+                  <p><strong>Reporting Time:</strong> 9:00 AM</p>
+                  <p><strong>Venue:</strong> Graphic Era Group of Institutions</p>
+                </div>
+              </div>
+
+              <div className="event-section">
+                <h2>Why Join?</h2>
+                <ul className="event-highlights">
+                  <li>This summer, experience the future of college life</li>
+                  <li>Build future ready AI and tech skills</li>
+                  <li>Explore exciting career possibilities in emerging technologies</li>
+                  <li>Participate completely free of cost</li>
+                </ul>
+              </div>
+
+              <div className="event-card">
+                <h2>Eligibility</h2>
+                <p className="event-lead event-lead-compact">
+                  Exclusively for <strong>Class 12 Appearing &amp; Passout Students</strong>
+                </p>
+              </div>
+            </div>
+
+            <p className="event-closing">
+              <strong>Connect. Learn. Lead.</strong>
+              <span>Your future starts here with Future X 3.0 Bootcamp.</span>
+            </p>
+          </article>
 
           <div className="form-popup">
             <div className="form-header">
               <h1>{formTitle}</h1>
             </div>
+
             <form className="bank-form" onSubmit={handleSubmit}>
               <div className="field-row full-width">
                 <label>
@@ -354,64 +415,6 @@ function ApplicationFormPage() {
               </div>
             </form>
           </div>
-
-          <article className="event-panel">
-            <p className="eyebrow desktop-only">Experience College Before College</p>
-            <h1 className="desktop-only">Future X 3.0 Bootcamp</h1>
-            <p className="event-lead">
-              Step into a world where curiosity meets innovation, ideas turn into action, and futures begin to take
-              shape. Future X 3.0 is a free 5 day immersive bootcamp designed for the brightest Class 12 students to
-              experience life at India&apos;s First Gen AI Campus.
-            </p>
-            <p className="event-lead">
-              Connect with industry experts, innovators, mentors, and like minded peers while exploring the
-              technologies shaping tomorrow.
-            </p>
-
-            <div className="event-body">
-              <div className="event-section">
-                <h2>What You Can Expect</h2>
-                <ul className="event-highlights">
-                  <li>Hands on workshops that transform curiosity into practical skills</li>
-                  <li>Networking opportunities with students, professionals, and innovators</li>
-                  <li>Immersive sessions on Artificial Intelligence and emerging technologies</li>
-                  <li>1:1 mentorship and career guidance from industry and academic leaders</li>
-                  <li>5 unforgettable days to explore your interests, passions and future goals</li>
-                </ul>
-              </div>
-
-              <div className="event-card">
-                <h2>Event Details</h2>
-                <div className="event-meta">
-                  <p><strong>7th - 12th June 2026</strong></p>
-                  <p><strong>Reporting Time:</strong> 9:00 AM</p>
-                  <p><strong>Venue:</strong> Graphic Era Group of Institutions</p>
-                </div>
-              </div>
-
-              <div className="event-section">
-                <h2>Why Join?</h2>
-                <ul className="event-highlights">
-                  <li>This summer, experience the future of college life</li>
-                  <li>Build future ready AI and tech skills</li>
-                  <li>Explore exciting career possibilities in emerging technologies</li>
-                  <li>Participate completely free of cost</li>
-                </ul>
-              </div>
-
-              <div className="event-card">
-                <h2>Eligibility</h2>
-                <p className="event-lead event-lead-compact">
-                  Exclusively for <strong>Class 12 Appearing &amp; Passout Students</strong>
-                </p>
-              </div>
-            </div>
-
-            <p className="event-closing">
-              <strong>Connect. Learn. Lead.</strong>
-              <span>Your future starts here with Future X 3.0 Bootcamp.</span>
-            </p>
-          </article>
         </div>
       </section>
     </main>
