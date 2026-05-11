@@ -1,37 +1,39 @@
-import { useEffect, useState } from 'react'
+﻿import { useState } from 'react'
 import api from '../api'
-import { formData } from '../formData'
 
-const formTitle = import.meta.env.VITE_FORM_TITLE || 'Apply Now'
-const formNote =
-  import.meta.env.VITE_FORM_NOTE ||
-  'I agree to receive information regarding my submitted enquiry and future admission updates.'
+const formTitle = import.meta.env.VITE_FORM_TITLE || 'Register Now'
 const logoUrl = `${import.meta.env.BASE_URL}geu-logo.webp`
 
-function createCaptcha() {
-  return Math.random().toString(36).slice(2, 8)
-}
+const indianStates = [
+  'Andhra Pradesh', 'Arunachal Pradesh', 'Assam', 'Bihar', 'Chhattisgarh', 'Goa', 'Gujarat', 'Haryana',
+  'Himachal Pradesh', 'Jharkhand', 'Karnataka', 'Kerala', 'Madhya Pradesh', 'Maharashtra', 'Manipur',
+  'Meghalaya', 'Mizoram', 'Nagaland', 'Odisha', 'Punjab', 'Rajasthan', 'Sikkim', 'Tamil Nadu', 'Telangana',
+  'Tripura', 'Uttar Pradesh', 'Uttarakhand', 'West Bengal', 'Delhi', 'Jammu and Kashmir', 'Ladakh',
+  'Andaman and Nicobar Islands', 'Chandigarh', 'Dadra and Nagar Haveli and Daman and Diu', 'Lakshadweep',
+  'Puducherry'
+]
+
+const classOptions = [
+  { value: 'class12-awaiting', label: 'Class 12 (Result Awaited)' },
+  { value: 'class12-pursuing', label: 'Class 12 (Pursuing)' },
+  { value: 'class11', label: 'Class 11' }
+]
 
 function ApplicationFormPage() {
   const [formValues, setFormValues] = useState({
     name: '',
-    email: '',
-    countryCode: '+91',
+    dob: '',
     mobile: '',
+    countryCode: '+91',
     otp: '',
-    country: 'IN',
+    parentMobile: '',
+    email: '',
+    schoolName: '',
+    city: '',
     state: '',
-    district: '',
-    department: '',
-    level: '',
-    course: '',
-    captchaInput: '',
-    agreedToUpdates: false,
+    studentClass: '',
+    indemnityAgreed: false,
   })
-  const [states, setStates] = useState(formData.states)
-  const [districts, setDistricts] = useState([])
-  const [courses, setCourses] = useState([])
-  const [captcha, setCaptcha] = useState(createCaptcha())
   const [otpVerified, setOtpVerified] = useState(false)
   const [otpMessage, setOtpMessage] = useState('')
   const [submitMessage, setSubmitMessage] = useState('')
@@ -39,40 +41,9 @@ function ApplicationFormPage() {
   const [isVerifyingOtp, setIsVerifyingOtp] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
 
-  useEffect(() => {
-    if (formValues.country !== 'IN') {
-      setStates([])
-      setDistricts([])
-      setFormValues((current) => ({ ...current, state: '', district: '' }))
-      return
-    }
-
-    setStates(formData.states)
-  }, [formValues.country])
-
-  useEffect(() => {
-    if (!formValues.state) {
-      setDistricts([])
-      setFormValues((current) => ({ ...current, district: '' }))
-      return
-    }
-
-    const matchedState = formData.states.find((state) => state.value === formValues.state)
-    setDistricts(matchedState?.districts ?? [])
-  }, [formValues.state])
-
-  useEffect(() => {
-    if (!formValues.department) {
-      setCourses([])
-      setFormValues((current) => ({ ...current, course: '' }))
-      return
-    }
-
-    setCourses(formData.courseOptions[formValues.department] ?? [])
-  }, [formValues.department])
-
   function handleChange(event) {
     const { name, value, type, checked } = event.target
+
     setFormValues((current) => ({
       ...current,
       [name]: type === 'checkbox' ? checked : value,
@@ -127,53 +98,51 @@ function ApplicationFormPage() {
     event.preventDefault()
     setSubmitMessage('')
 
-    if (formValues.captchaInput.toLowerCase() !== captcha.toLowerCase()) {
-      setSubmitMessage('Captcha does not match.')
+    if (!otpVerified) {
+      setSubmitMessage('Please verify OTP before submitting.')
       return
     }
 
-    if (!otpVerified) {
-      setSubmitMessage('Please verify OTP before submitting.')
+    if (!formValues.indemnityAgreed) {
+      setSubmitMessage('Please agree to the Indemnity & Consent Declaration.')
       return
     }
 
     setIsSubmitting(true)
 
     try {
-      const response = await api.post('/forms', {
-        name: formValues.name,
-        email: formValues.email,
-        mobile: formValues.mobile,
-        countryCode: formValues.countryCode,
-        otpVerified,
-        country: formData.countryMap[formValues.country] || formValues.country,
-        state: formValues.state,
-        district: formValues.district,
-        department: formValues.department,
-        level: formValues.level,
-        course: formValues.course,
-        captcha: formValues.captchaInput,
-        agreedToUpdates: formValues.agreedToUpdates,
-      })
+      const formData = new FormData()
+      formData.append('name', formValues.name)
+      formData.append('dob', formValues.dob)
+      formData.append('mobile', formValues.mobile)
+      formData.append('countryCode', formValues.countryCode)
+      formData.append('otpVerified', otpVerified)
+      formData.append('parentMobile', formValues.parentMobile)
+      formData.append('email', formValues.email)
+      formData.append('schoolName', formValues.schoolName)
+      formData.append('city', formValues.city)
+      formData.append('state', formValues.state)
+      formData.append('studentClass', formValues.studentClass)
+      formData.append('indemnityAgreed', formValues.indemnityAgreed)
+
+      const response = await api.post('/forms', formData)
 
       setSubmitMessage(response.data.message)
       setFormValues({
         name: '',
-        email: '',
-        countryCode: '+91',
+        dob: '',
         mobile: '',
+        countryCode: '+91',
         otp: '',
-        country: 'IN',
+        parentMobile: '',
+        email: '',
+        schoolName: '',
+        city: '',
         state: '',
-        district: '',
-        department: '',
-        level: '',
-        course: '',
-        captchaInput: '',
-        agreedToUpdates: false,
+        studentClass: '',
+        indemnityAgreed: false,
       })
       setOtpVerified(false)
-      setCaptcha(createCaptcha())
     } catch (error) {
       setSubmitMessage(error.response?.data?.message || 'Submission failed.')
     } finally {
@@ -183,85 +152,136 @@ function ApplicationFormPage() {
 
   return (
     <main className="hero-shell">
-      <section className="hero-banner">
+      <section className="hero-banner two-column">
         <div className="hero-overlay" />
         <img src={logoUrl} alt="Graphic Era University" className="hero-logo" />
 
-        <div className="hero-content">
-          <div className="event-header-mobile">
-            <p className="eyebrow">Experience College Before College</p>
-            <h1>Future X 3.0 Bootcamp</h1>
-          </div>
-
-          <article className="event-panel">
-            <div className="event-panel-header">
-              <p className="eyebrow">Experience College Before College</p>
-              <h1>Future X 3.0 Bootcamp</h1>
+        <div className="hero-content two-column-layout">
+          {/* LEFT SIDE - Content */}
+          <div className="left-content">
+            <div className="content-header">
+              <span className="content-badge">5-Day Residential Program</span>
+              <h1 className="content-title">
+                Future X 3.0 <span className="title-accent">Bootcamp</span>
+              </h1>
+              <p className="content-tagline">Experience College Before College</p>
             </div>
-            <p className="event-lead">
-              Step into a world where curiosity meets innovation, ideas turn into action, and futures begin to take
-              shape. Future X 3.0 is a free 5 day immersive bootcamp designed for the brightest Class 12 students to
-              experience life at India&apos;s First Gen AI Campus.
-            </p>
-            <p className="event-lead">
-              Connect with industry experts, innovators, mentors, and like minded peers while exploring the
-              technologies shaping tomorrow.
+
+            <p className="content-description">
+              A transformative journey where curiosity meets innovation. Join India's brightest Class 11 & 12 students for an immersive 5-day experience at the country's First Gen AI Campus.
             </p>
 
-            <div className="event-body">
-              <div className="event-section">
-                <h2>What You Can Expect</h2>
-                <ul className="event-highlights">
-                  <li>Hands on workshops that transform curiosity into practical skills</li>
-                  <li>Networking opportunities with students, professionals, and innovators</li>
-                  <li>Immersive sessions on Artificial Intelligence and emerging technologies</li>
-                  <li>1:1 mentorship and career guidance from industry and academic leaders</li>
-                  <li>5 unforgettable days to explore your interests, passions and future goals</li>
-                </ul>
-              </div>
-
-              <div className="event-card">
-                <h2>Event Details</h2>
-                <div className="event-meta">
-                  <p><strong>7th - 12th June 2026</strong></p>
-                  <p><strong>Reporting Time:</strong> 9:00 AM</p>
-                  <p><strong>Venue:</strong> Graphic Era Group of Institutions</p>
+            <div className="content-highlights">
+              <div className="highlight-card">
+                <span className="h-icon">📅</span>
+                <div className="h-text">
+                  <strong>7-12 June 2026</strong>
+                  <span>Reporting: 9:00 AM</span>
                 </div>
               </div>
-
-              <div className="event-section">
-                <h2>Why Join?</h2>
-                <ul className="event-highlights">
-                  <li>This summer, experience the future of college life</li>
-                  <li>Build future ready AI and tech skills</li>
-                  <li>Explore exciting career possibilities in emerging technologies</li>
-                  <li>Participate completely free of cost</li>
-                </ul>
+              <div className="highlight-card">
+                <span className="h-icon">🎯</span>
+                <div className="h-text">
+                  <strong>Eligibility</strong>
+                  <span>Class 11 & 12 Students</span>
+                </div>
               </div>
-
-              <div className="event-card">
-                <h2>Eligibility</h2>
-                <p className="event-lead event-lead-compact">
-                  Exclusively for <strong>Class 12 Appearing &amp; Passout Students</strong>
-                </p>
+              <div className="highlight-card free">
+                <span className="h-icon">✓</span>
+                <div className="h-text">
+                  <strong>100% FREE</strong>
+                  <span>No Registration Fee</span>
+                </div>
               </div>
             </div>
 
-            <p className="event-closing">
-              <strong>Connect. Learn. Lead.</strong>
-              <span>Your future starts here with Future X 3.0 Bootcamp.</span>
-            </p>
-          </article>
-
-          <div className="form-popup">
-            <div className="form-header">
-              <h1>{formTitle}</h1>
+            <div className="content-features">
+              <h3>What You'll Experience</h3>
+              <ul>
+                <li>Hands-on AI & Emerging Tech Workshops</li>
+                <li>1:1 Mentorship from Industry Leaders</li>
+                <li>Networking with Innovators & Peers</li>
+                <li>Career Guidance & Future Roadmaps</li>
+                <li>Campus Life Experience</li>
+              </ul>
             </div>
 
-            <form className="bank-form" onSubmit={handleSubmit}>
+            <div className="content-venue">
+              <p><strong>Venue:</strong> Graphic Era Deemed to be University</p>
+              <p>Bell Road, Clement Town, Dehradun</p>
+            </div>
+
+            <div className="content-footer">
+              <p className="footer-tagline">Connect. Learn. Lead.</p>
+              <p className="footer-sub">Your future starts here.</p>
+            </div>
+          </div>
+
+          {/* RIGHT SIDE - Form */}
+          <div className="right-form">
+            <div className="form-container">
+              <div className="form-header-right">
+                <h2>Register Now</h2>
+                <p>Secure your spot for this exclusive program</p>
+              </div>
+              <form className="registration-form-right" onSubmit={handleSubmit}>
               <div className="field-row full-width">
                 <label>
-                  <input name="name" value={formValues.name} onChange={handleChange} type="text" placeholder="Enter Name *" />
+                  <input name="name" value={formValues.name} onChange={handleChange} type="text" placeholder="Name *" required />
+                </label>
+              </div>
+
+              <div className="field-row full-width">
+                <label>
+                  <input name="dob" value={formValues.dob} onChange={handleChange} type="date" placeholder="Date of Birth *" required />
+                </label>
+              </div>
+
+              <div className="field-row full-width phone-row">
+                <label className="country-prefix">
+                  <select name="countryCode" value={formValues.countryCode} onChange={handleChange}>
+                    <option value="+91">+91</option>
+                  </select>
+                </label>
+                <label className="phone-input">
+                  <input
+                    name="mobile"
+                    value={formValues.mobile}
+                    onChange={handleChange}
+                    type="tel"
+                    placeholder="Contact No. *"
+                    pattern="[0-9]{10}"
+                    maxLength="10"
+                    required
+                  />
+                </label>
+              </div>
+
+              <div className="field-row full-width otp-actions-row">
+                <button className="secondary-action" type="button" onClick={handleSendOtp} disabled={isSendingOtp || !formValues.mobile || formValues.mobile.length !== 10}>
+                  {isSendingOtp ? 'Sending...' : 'Send OTP'}
+                </button>
+                <div className="otp-row">
+                  <input name="otp" value={formValues.otp} onChange={handleChange} type="text" placeholder="Enter OTP" maxLength="6" />
+                  <button className="verify-button" type="button" onClick={handleVerifyOtp} disabled={isVerifyingOtp || !formValues.otp}>
+                    {isVerifyingOtp ? 'Verifying' : 'Verify'}
+                  </button>
+                </div>
+              </div>
+              {otpVerified && <p className="status-message success">OTP Verified</p>}
+
+              <div className="field-row full-width">
+                <label>
+                  <input
+                    name="parentMobile"
+                    value={formValues.parentMobile}
+                    onChange={handleChange}
+                    type="tel"
+                    placeholder="Parents No. *"
+                    pattern="[0-9]{10}"
+                    maxLength="10"
+                    required
+                  />
                 </label>
               </div>
 
@@ -272,148 +292,123 @@ function ApplicationFormPage() {
                     value={formValues.email}
                     onChange={handleChange}
                     type="email"
-                    placeholder="Enter Email Address *"
+                    placeholder="Email Id *"
+                    required
                   />
                 </label>
               </div>
-
-              <div className="field-row full-width phone-row">
-                <label className="country-prefix">
-                  <select name="countryCode" value={formValues.countryCode} onChange={handleChange}>
-                    <option value="+91">+91</option>
-                    <option value="+1">+1</option>
-                    <option value="+44">+44</option>
-                    <option value="+61">+61</option>
-                  </select>
-                </label>
-
-                <label className="phone-input">
-                  <input
-                    name="mobile"
-                    value={formValues.mobile}
-                    onChange={handleChange}
-                    type="tel"
-                    placeholder="Enter Mobile Number *"
-                  />
-                </label>
-              </div>
-
-              <div className="field-row full-width otp-actions-row">
-                <button className="secondary-action" type="button" onClick={handleSendOtp} disabled={isSendingOtp}>
-                  {isSendingOtp ? 'Sending...' : 'Send OTP'}
-                </button>
-                <div className="otp-row">
-                  <input name="otp" value={formValues.otp} onChange={handleChange} type="text" placeholder="Enter OTP" />
-                  <button className="verify-button" type="button" onClick={handleVerifyOtp} disabled={isVerifyingOtp}>
-                    {isVerifyingOtp ? 'Verifying' : 'Verify'}
-                  </button>
-                </div>
-              </div>
-
-              <label>
-                <select name="country" value={formValues.country} onChange={handleChange}>
-                  <option value="">Select Country *</option>
-                  {formData.countries.map((country) => (
-                    <option key={country.value} value={country.value}>
-                      {country.label}
-                    </option>
-                  ))}
-                </select>
-              </label>
-
-              <label>
-                <select name="state" value={formValues.state} onChange={handleChange} disabled={formValues.country !== 'IN' || !states.length}>
-                  <option value="">{formValues.country === 'IN' ? 'Select State *' : 'Available for India'}</option>
-                  {states.map((state) => (
-                    <option key={state.value} value={state.value}>
-                      {state.label}
-                    </option>
-                  ))}
-                </select>
-              </label>
-
-              <label>
-                <select name="district" value={formValues.district} onChange={handleChange} disabled={!districts.length}>
-                  <option value="">{districts.length ? 'Select District *' : 'Select state first'}</option>
-                  {districts.map((district) => (
-                    <option key={district.value} value={district.value}>
-                      {district.label}
-                    </option>
-                  ))}
-                </select>
-              </label>
-
-              <label>
-                <select name="department" value={formValues.department} onChange={handleChange}>
-                  <option value="">Select Department *</option>
-                  {formData.departments.map((department) => (
-                    <option key={department.value} value={department.value}>
-                      {department.label}
-                    </option>
-                  ))}
-                </select>
-              </label>
-
-              <label>
-                <select name="level" value={formValues.level} onChange={handleChange}>
-                  <option value="">Select Level *</option>
-                  {formData.levels.map((level) => (
-                    <option key={level.value} value={level.value}>
-                      {level.label}
-                    </option>
-                  ))}
-                </select>
-              </label>
 
               <div className="field-row full-width">
                 <label>
-                  <select name="course" value={formValues.course} onChange={handleChange} disabled={!courses.length}>
-                    <option value="">{courses.length ? 'Select Course *' : 'Select department first'}</option>
-                    {courses.map((course) => (
-                      <option key={course.value} value={course.value}>
-                        {course.label}
-                      </option>
+                  <input name="schoolName" value={formValues.schoolName} onChange={handleChange} type="text" placeholder="School Name *" required />
+                </label>
+              </div>
+
+              <div className="field-row full-width">
+                <label>
+                  <input name="city" value={formValues.city} onChange={handleChange} type="text" placeholder="City *" required />
+                </label>
+              </div>
+
+              <div className="field-row full-width">
+                <label>
+                  <select name="state" value={formValues.state} onChange={handleChange} required>
+                    <option value="">Select State *</option>
+                    {indianStates.map((state) => (
+                      <option key={state} value={state}>{state}</option>
                     ))}
                   </select>
                 </label>
               </div>
 
-              <div className="field-row full-width captcha-row">
-                <div className="captcha-box">
-                  <span>{captcha}</span>
-                  <button className="captcha-refresh" type="button" onClick={() => setCaptcha(createCaptcha())}>
-                    Refresh
-                  </button>
-                </div>
+              <div className="field-row full-width">
                 <label>
-                  <input
-                    name="captchaInput"
-                    value={formValues.captchaInput}
-                    onChange={handleChange}
-                    type="text"
-                    placeholder="Enter Captcha"
-                  />
+                  <select name="studentClass" value={formValues.studentClass} onChange={handleChange} required>
+                    <option value="">Select Class *</option>
+                    {classOptions.map((cls) => (
+                      <option key={cls.value} value={cls.value}>{cls.label}</option>
+                    ))}
+                  </select>
                 </label>
               </div>
 
-              {otpMessage ? <p className="status-message">{otpMessage}</p> : null}
-              {submitMessage ? <p className="status-message">{submitMessage}</p> : null}
+              <div className="field-row full-width indemnity-row">
+                <div className="indemnity-label">
+                  <strong>Indemnity & Consent Declaration</strong>
+                  <p className="indemnity-text">
+                    I, the undersigned student, voluntarily agree to participate in the 5-Day Residential Boot Camp at the campus of Graphic Era Deemed to be University. I confirm that my participation is by my own willingness and I shall be solely responsible for my travel arrangements, stay, personal belongings, and adherence to the institution's rules, discipline and code of conduct during the program. I undertake to maintain proper behavior and follow all safety guidelines. The institution shall not be held liable for any personal loss, injury, or unforeseen circumstances arising during my participation.
+                  </p>
+                  <label className="checkbox-wrapper">
+                    <input
+                      name="indemnityAgreed"
+                      checked={formValues.indemnityAgreed}
+                      onChange={handleChange}
+                      type="checkbox"
+                      required
+                    />
+                    <span>I Agree *</span>
+                  </label>
+                </div>
+              </div>
+
+              {otpMessage && !otpVerified && <p className="status-message">{otpMessage}</p>}
+              {submitMessage && <p className="status-message">{submitMessage}</p>}
 
               <div className="full-width form-footer">
-                <label className="agree-row agree-row-single">
-                  <input
-                    name="agreedToUpdates"
-                    checked={formValues.agreedToUpdates}
-                    onChange={handleChange}
-                    type="checkbox"
-                  />
-                  <span>{formNote}</span>
-                </label>
-                <button type="submit" disabled={isSubmitting}>
-                  {isSubmitting ? 'Submitting...' : 'Submit'}
+                <button type="submit" disabled={isSubmitting || !otpVerified}>
+                  {isSubmitting ? 'Submitting...' : 'Complete Registration'}
                 </button>
               </div>
             </form>
+            </div>
+          </div>
+
+          {/* Mobile Only: Text Details (shown after form) */}
+          <div className="mobile-details">
+            <div className="details-highlights">
+              <div className="highlight-card">
+                <span className="h-icon">📅</span>
+                <div className="h-text">
+                  <strong>7-12 June 2026</strong>
+                  <span>Reporting: 9:00 AM</span>
+                </div>
+              </div>
+              <div className="highlight-card">
+                <span className="h-icon">🎯</span>
+                <div className="h-text">
+                  <strong>Eligibility</strong>
+                  <span>Class 11 & 12 Students</span>
+                </div>
+              </div>
+              <div className="highlight-card free">
+                <span className="h-icon">✓</span>
+                <div className="h-text">
+                  <strong>100% FREE</strong>
+                  <span>No Registration Fee</span>
+                </div>
+              </div>
+            </div>
+
+            <div className="details-features">
+              <h3>What You'll Experience</h3>
+              <ul>
+                <li>Hands-on AI & Emerging Tech Workshops</li>
+                <li>1:1 Mentorship from Industry Leaders</li>
+                <li>Networking with Innovators & Peers</li>
+                <li>Career Guidance & Future Roadmaps</li>
+                <li>Campus Life Experience</li>
+              </ul>
+            </div>
+
+            <div className="details-venue">
+              <p><strong>Venue:</strong> Graphic Era Deemed to be University</p>
+              <p>Bell Road, Clement Town, Dehradun</p>
+            </div>
+
+            <div className="details-footer">
+              <p className="tagline">Connect. Learn. Lead.</p>
+              <p className="sub">Your future starts here.</p>
+            </div>
           </div>
         </div>
       </section>
