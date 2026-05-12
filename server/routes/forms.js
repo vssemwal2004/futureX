@@ -1,4 +1,5 @@
 ﻿import express from 'express'
+import fs from 'fs'
 import multer from 'multer'
 import path from 'path'
 import XLSX from 'xlsx'
@@ -10,7 +11,12 @@ const uploadsDir = path.join(process.cwd(), 'uploads')
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, uploadsDir)
+    try {
+      fs.mkdirSync(uploadsDir, { recursive: true })
+      cb(null, uploadsDir)
+    } catch (error) {
+      cb(error)
+    }
   },
   filename: (req, file, cb) => {
     const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9)
@@ -47,6 +53,13 @@ function handleUpload(request, response, next) {
 
     if (error.message.includes('Only .jpg')) {
       return response.status(400).json({ message: error.message })
+    }
+
+    if (error.code === 'EACCES' || error.code === 'EROFS') {
+      console.error('File upload storage error:', error)
+      return response.status(500).json({
+        message: 'Server cannot write uploaded files. Check upload storage permissions.',
+      })
     }
 
     console.error('File upload error:', error)
@@ -114,6 +127,15 @@ router.post('/', handleUpload, async (request, response) => {
 
     response.status(201).json({ message: 'Registration submitted successfully.', entry })
   } catch (error) {
+    if (error.name === 'ValidationError') {
+      return response.status(400).json({ message: 'Please complete all required fields correctly.' })
+    }
+
+    if (error.name === 'MongoServerSelectionError' || error.name === 'MongooseServerSelectionError') {
+      console.error('Database connection error:', error)
+      return response.status(503).json({ message: 'Database is not reachable. Check MongoDB connection.' })
+    }
+
     console.error('Form submission error:', error)
     response.status(500).json({ message: 'Submission failed. Please try again.' })
   }
