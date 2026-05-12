@@ -5,56 +5,69 @@ import { requireAdminAuth } from '../middleware/adminAuth.js'
 
 const router = express.Router()
 
+const requiredFields = [
+  ['name', 'Name'],
+  ['dob', 'Date of birth'],
+  ['mobile', 'Mobile number'],
+  ['countryCode', 'Country code'],
+  ['parentMobile', 'Parent mobile number'],
+  ['email', 'Email'],
+  ['schoolName', 'School name'],
+  ['city', 'City'],
+  ['state', 'State'],
+  ['studentClass', 'Class'],
+]
+
+function cleanText(value) {
+  return typeof value === 'string' ? value.trim() : value
+}
+
+function isMissing(value) {
+  return value === undefined || value === null || cleanText(value) === ''
+}
+
+function isTrue(value) {
+  return value === true || value === 'true'
+}
+
 router.post('/', async (request, response) => {
   try {
-    const {
-      name,
-      dob,
-      mobile,
-      countryCode,
-      otpVerified,
-      parentMobile,
-      email,
-      schoolName,
-      city,
-      state,
-      studentClass,
-      indemnityAgreed,
-    } = request.body
+    const form = Object.fromEntries(
+      Object.entries(request.body || {}).map(([key, value]) => [key, cleanText(value)]),
+    )
 
-    if (
-      !name ||
-      !dob ||
-      !mobile ||
-      !countryCode ||
-      !parentMobile ||
-      !email ||
-      !schoolName ||
-      !city ||
-      !state ||
-      !studentClass ||
-      !indemnityAgreed
-    ) {
-      return response.status(400).json({ message: 'Please complete all required fields.' })
+    const missingFields = requiredFields
+      .filter(([key]) => isMissing(form[key]))
+      .map(([, label]) => label)
+
+    if (!isTrue(form.indemnityAgreed)) {
+      missingFields.push('Indemnity & Consent Declaration')
     }
 
-    if (!otpVerified || otpVerified === 'false') {
+    if (missingFields.length > 0) {
+      return response.status(400).json({
+        message: `Please complete: ${missingFields.join(', ')}.`,
+        missingFields,
+      })
+    }
+
+    if (!isTrue(form.otpVerified)) {
       return response.status(400).json({ message: 'OTP verification is required.' })
     }
 
     const entry = await FormEntry.create({
-      name,
-      dob: new Date(dob),
-      mobile,
-      countryCode,
-      otpVerified: otpVerified === 'true' || otpVerified === true,
-      parentMobile,
-      email,
-      schoolName,
-      city,
-      state,
-      studentClass,
-      indemnityAgreed: indemnityAgreed === 'true' || indemnityAgreed === true,
+      name: form.name,
+      dob: new Date(form.dob),
+      mobile: form.mobile,
+      countryCode: form.countryCode,
+      otpVerified: true,
+      parentMobile: form.parentMobile,
+      email: form.email,
+      schoolName: form.schoolName,
+      city: form.city,
+      state: form.state,
+      studentClass: form.studentClass,
+      indemnityAgreed: true,
     })
 
     response.status(201).json({ message: 'Registration submitted successfully.', entry })

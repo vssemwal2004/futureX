@@ -1,4 +1,4 @@
-﻿import { useState } from 'react'
+﻿import { useEffect, useState } from 'react'
 import api from '../api'
 
 const formTitle = import.meta.env.VITE_FORM_TITLE || 'Register Now'
@@ -18,6 +18,14 @@ const classOptions = [
   { value: 'class12-pursuing', label: 'Class 12 (Pursuing)' },
   { value: 'class11', label: 'Class 11' }
 ]
+
+const resendCooldownSeconds = 120
+
+function formatSeconds(seconds) {
+  const minutes = String(Math.floor(seconds / 60)).padStart(2, '0')
+  const remainingSeconds = String(seconds % 60).padStart(2, '0')
+  return `${minutes}:${remainingSeconds}`
+}
 
 function ApplicationFormPage() {
   const [formValues, setFormValues] = useState({
@@ -40,6 +48,19 @@ function ApplicationFormPage() {
   const [isSendingOtp, setIsSendingOtp] = useState(false)
   const [isVerifyingOtp, setIsVerifyingOtp] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [resendSeconds, setResendSeconds] = useState(0)
+
+  useEffect(() => {
+    if (resendSeconds <= 0) {
+      return undefined
+    }
+
+    const timer = window.setInterval(() => {
+      setResendSeconds((seconds) => Math.max(seconds - 1, 0))
+    }, 1000)
+
+    return () => window.clearInterval(timer)
+  }, [resendSeconds])
 
   function handleChange(event) {
     const { name, value, type, checked } = event.target
@@ -51,10 +72,15 @@ function ApplicationFormPage() {
 
     if (name === 'mobile' || name === 'countryCode') {
       setOtpVerified(false)
+      setResendSeconds(0)
     }
   }
 
   async function handleSendOtp() {
+    if (resendSeconds > 0) {
+      return
+    }
+
     setOtpMessage('')
     setSubmitMessage('')
     setIsSendingOtp(true)
@@ -66,6 +92,7 @@ function ApplicationFormPage() {
       })
 
       setOtpMessage(response.data.message)
+      setResendSeconds(resendCooldownSeconds)
     } catch (error) {
       setOtpMessage(error.response?.data?.message || 'Failed to send OTP.')
     } finally {
@@ -111,19 +138,23 @@ function ApplicationFormPage() {
     setIsSubmitting(true)
 
     try {
-      const response = await api.post('/forms', {
-        name: formValues.name,
+      const payload = {
+        name: formValues.name.trim(),
         dob: formValues.dob,
-        mobile: formValues.mobile,
+        mobile: formValues.mobile.trim(),
         countryCode: formValues.countryCode,
         otpVerified,
-        parentMobile: formValues.parentMobile,
-        email: formValues.email,
-        schoolName: formValues.schoolName,
-        city: formValues.city,
+        parentMobile: formValues.parentMobile.trim(),
+        email: formValues.email.trim(),
+        schoolName: formValues.schoolName.trim(),
+        city: formValues.city.trim(),
         state: formValues.state,
         studentClass: formValues.studentClass,
         indemnityAgreed: formValues.indemnityAgreed,
+      }
+
+      const response = await api.post('/forms', {
+        ...payload,
       })
 
       setSubmitMessage(response.data.message)
@@ -142,6 +173,7 @@ function ApplicationFormPage() {
         indemnityAgreed: false,
       })
       setOtpVerified(false)
+      setResendSeconds(0)
     } catch (error) {
       setSubmitMessage(error.response?.data?.message || 'Submission failed.')
     } finally {
@@ -257,8 +289,13 @@ function ApplicationFormPage() {
               </div>
 
               <div className="field-row full-width otp-actions-row">
-                <button className="secondary-action" type="button" onClick={handleSendOtp} disabled={isSendingOtp || !formValues.mobile || formValues.mobile.length !== 10}>
-                  {isSendingOtp ? 'Sending...' : 'Send OTP'}
+                <button
+                  className="secondary-action"
+                  type="button"
+                  onClick={handleSendOtp}
+                  disabled={isSendingOtp || resendSeconds > 0 || !formValues.mobile || formValues.mobile.length !== 10}
+                >
+                  {isSendingOtp ? 'Sending...' : resendSeconds > 0 ? `Resend ${formatSeconds(resendSeconds)}` : 'Send OTP'}
                 </button>
                 <div className="otp-row">
                   <input name="otp" value={formValues.otp} onChange={handleChange} type="text" placeholder="Enter OTP" maxLength="6" />
