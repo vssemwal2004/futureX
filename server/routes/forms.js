@@ -1,73 +1,11 @@
 ﻿import express from 'express'
-import fs from 'fs'
-import multer from 'multer'
-import path from 'path'
 import XLSX from 'xlsx'
 import FormEntry from '../models/FormEntry.js'
 import { requireAdminAuth } from '../middleware/adminAuth.js'
 
 const router = express.Router()
-const uploadsDir = path.join(process.cwd(), 'uploads')
 
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    try {
-      fs.mkdirSync(uploadsDir, { recursive: true })
-      cb(null, uploadsDir)
-    } catch (error) {
-      cb(error)
-    }
-  },
-  filename: (req, file, cb) => {
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9)
-    cb(null, 'id-' + uniqueSuffix + path.extname(file.originalname))
-  }
-})
-
-const fileFilter = (req, file, cb) => {
-  const allowedTypes = ['.jpg', '.jpeg', '.png', '.pdf']
-  const ext = path.extname(file.originalname).toLowerCase()
-  if (allowedTypes.includes(ext)) {
-    cb(null, true)
-  } else {
-    cb(new Error('Only .jpg, .jpeg, .png, and .pdf files are allowed'))
-  }
-}
-
-const upload = multer({
-  storage,
-  fileFilter,
-  limits: { fileSize: 1024 * 1024 } // 1 MB
-})
-
-function handleUpload(request, response, next) {
-  upload.single('idDocument')(request, response, (error) => {
-    if (!error) {
-      next()
-      return
-    }
-
-    if (error instanceof multer.MulterError && error.code === 'LIMIT_FILE_SIZE') {
-      return response.status(400).json({ message: 'File size must be less than 1 MB.' })
-    }
-
-    if (error.message.includes('Only .jpg')) {
-      return response.status(400).json({ message: error.message })
-    }
-
-    if (error.code === 'EACCES' || error.code === 'EROFS') {
-      console.error('File upload storage error:', error)
-      return response.status(500).json({
-        message: 'Server cannot write uploaded files. Check upload storage permissions.',
-      })
-    }
-
-    console.error('File upload error:', error)
-    response.status(500).json({ message: 'File upload failed. Please try again.' })
-  })
-}
-
-router.post('/', handleUpload, async (request, response) => {
+router.post('/', async (request, response) => {
   try {
     const {
       name,
@@ -104,10 +42,6 @@ router.post('/', handleUpload, async (request, response) => {
       return response.status(400).json({ message: 'OTP verification is required.' })
     }
 
-    if (!request.file) {
-      return response.status(400).json({ message: 'ID document upload is required.' })
-    }
-
     const entry = await FormEntry.create({
       name,
       dob: new Date(dob),
@@ -120,8 +54,6 @@ router.post('/', handleUpload, async (request, response) => {
       city,
       state,
       studentClass,
-      idDocumentPath: request.file.path,
-      idDocumentOriginalName: request.file.originalname,
       indemnityAgreed: indemnityAgreed === 'true' || indemnityAgreed === true,
     })
 
@@ -161,7 +93,6 @@ router.get('/export', requireAdminAuth, async (_request, response) => {
       City: entry.city,
       State: entry.state,
       Class: entry.studentClass,
-      IDDocument: entry.idDocumentOriginalName,
       IndemnityAgreed: entry.indemnityAgreed ? 'Yes' : 'No',
       SubmittedAt: entry.createdAt,
     })),

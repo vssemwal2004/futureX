@@ -405,29 +405,6 @@ textarea {
   font-size: 0.75rem;
 }
 
-/* Compact file upload */
-.file-upload-row {
-  margin: 2px 0;
-}
-
-.file-upload-label {
-  padding: 8px 10px;
-  gap: 4px;
-}
-
-.file-upload-label span {
-  font-size: 0.75rem;
-}
-
-.file-upload-label small {
-  font-size: 0.65rem;
-}
-
-.file-upload-label input[type="file"] {
-  padding: 4px 0;
-  font-size: 0.7rem;
-}
-
 /* Compact indemnity */
 .indemnity-row {
   margin: 2px 0;
@@ -1501,58 +1478,6 @@ textarea {
   font-weight: 600;
 }
 
-.file-upload-row {
-  margin: 4px 0;
-}
-
-.file-upload-label {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  padding: 10px 12px;
-  border: 1px dashed #b8c2d4;
-  border-radius: 8px;
-  background: #fafbfc;
-  cursor: pointer;
-  transition: border-color 200ms ease, background 200ms ease;
-}
-
-.file-upload-label:hover {
-  border-color: #2146c7;
-  background: #f0f4ff;
-}
-
-.file-upload-label span {
-  color: #3d4c63;
-  font-size: 0.8rem;
-  font-weight: 600;
-}
-
-.file-upload-label input[type="file"] {
-  padding: 6px 0;
-  border: none;
-  box-shadow: none;
-  background: transparent;
-  font-size: 0.75rem;
-  cursor: pointer;
-}
-
-.file-upload-label small {
-  color: #6b7a94;
-  font-size: 0.7rem;
-}
-
-.file-name {
-  display: inline-block;
-  margin-top: 4px;
-  padding: 4px 10px;
-  background: #e8f0fe;
-  border-radius: 4px;
-  color: #1a73e8;
-  font-size: 0.75rem;
-  font-weight: 500;
-}
-
 .bank-form input,
 .bank-form select {
   padding: 9px 11px;
@@ -2249,10 +2174,6 @@ th {
 
   .checkbox-wrapper span {
     font-size: 0.78rem;
-  }
-
-  .file-upload-label {
-    padding: 8px 10px;
   }
 
   .bank-form {

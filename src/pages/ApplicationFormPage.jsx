@@ -32,7 +32,6 @@ function ApplicationFormPage() {
     city: '',
     state: '',
     studentClass: '',
-    idDocument: null,
     indemnityAgreed: false,
   })
   const [otpVerified, setOtpVerified] = useState(false)
@@ -41,14 +40,13 @@ function ApplicationFormPage() {
   const [isSendingOtp, setIsSendingOtp] = useState(false)
   const [isVerifyingOtp, setIsVerifyingOtp] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const [fileInputKey, setFileInputKey] = useState(0)
 
   function handleChange(event) {
-    const { name, value, type, checked, files } = event.target
+    const { name, value, type, checked } = event.target
 
     setFormValues((current) => ({
       ...current,
-      [name]: type === 'checkbox' ? checked : type === 'file' ? files?.[0] || null : value,
+      [name]: type === 'checkbox' ? checked : value,
     }))
 
     if (name === 'mobile' || name === 'countryCode') {
@@ -110,30 +108,23 @@ function ApplicationFormPage() {
       return
     }
 
-    if (!formValues.idDocument) {
-      setSubmitMessage('Please upload an ID document.')
-      return
-    }
-
     setIsSubmitting(true)
 
     try {
-      const formData = new FormData()
-      formData.append('name', formValues.name)
-      formData.append('dob', formValues.dob)
-      formData.append('mobile', formValues.mobile)
-      formData.append('countryCode', formValues.countryCode)
-      formData.append('otpVerified', otpVerified)
-      formData.append('parentMobile', formValues.parentMobile)
-      formData.append('email', formValues.email)
-      formData.append('schoolName', formValues.schoolName)
-      formData.append('city', formValues.city)
-      formData.append('state', formValues.state)
-      formData.append('studentClass', formValues.studentClass)
-      formData.append('idDocument', formValues.idDocument)
-      formData.append('indemnityAgreed', formValues.indemnityAgreed)
-
-      const response = await api.post('/forms', formData)
+      const response = await api.post('/forms', {
+        name: formValues.name,
+        dob: formValues.dob,
+        mobile: formValues.mobile,
+        countryCode: formValues.countryCode,
+        otpVerified,
+        parentMobile: formValues.parentMobile,
+        email: formValues.email,
+        schoolName: formValues.schoolName,
+        city: formValues.city,
+        state: formValues.state,
+        studentClass: formValues.studentClass,
+        indemnityAgreed: formValues.indemnityAgreed,
+      })
 
       setSubmitMessage(response.data.message)
       setFormValues({
@@ -148,11 +139,9 @@ function ApplicationFormPage() {
         city: '',
         state: '',
         studentClass: '',
-        idDocument: null,
         indemnityAgreed: false,
       })
       setOtpVerified(false)
-      setFileInputKey((current) => current + 1)
     } catch (error) {
       setSubmitMessage(error.response?.data?.message || 'Submission failed.')
     } finally {
@@ -339,24 +328,6 @@ function ApplicationFormPage() {
                       <option key={cls.value} value={cls.value}>{cls.label}</option>
                     ))}
                   </select>
-                </label>
-              </div>
-
-              <div className="field-row full-width file-upload-row">
-                <label className="file-upload-label">
-                  <span>ID Document *</span>
-                  <input
-                    key={fileInputKey}
-                    name="idDocument"
-                    onChange={handleChange}
-                    type="file"
-                    accept=".jpg,.jpeg,.png,.pdf"
-                    required
-                  />
-                  <small>Upload JPG, PNG, or PDF under 1 MB.</small>
-                  {formValues.idDocument ? (
-                    <span className="file-name">{formValues.idDocument.name}</span>
-                  ) : null}
                 </label>
               </div>
 

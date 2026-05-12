@@ -1,7 +1,6 @@
 import cors from 'cors'
 import dotenv from 'dotenv'
 import express from 'express'
-import fs from 'fs'
 import mongoose from 'mongoose'
 import path from 'path'
 import authRouter from './routes/auth.js'
@@ -10,11 +9,6 @@ import otpRouter from './routes/otp.js'
 
 dotenv.config()
 dotenv.config({ path: path.join(process.cwd(), 'server', '.env') })
-
-const uploadsDir = path.join(process.cwd(), 'uploads')
-if (!fs.existsSync(uploadsDir)) {
-  fs.mkdirSync(uploadsDir, { recursive: true })
-}
 
 const app = express()
 const port = Number(process.env.SERVER_PORT || 4000)
@@ -26,7 +20,6 @@ app.use(
   }),
 )
 app.use(express.json())
-app.use('/uploads', express.static(uploadsDir))
 
 app.get('/api/health', (_request, response) => {
   response.json({ ok: true })

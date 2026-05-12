@@ -13,8 +13,6 @@ const formEntrySchema = new mongoose.Schema(
     city: { type: String, required: true, trim: true },
     state: { type: String, required: true, trim: true },
     studentClass: { type: String, required: true, trim: true },
-    idDocumentPath: { type: String, required: true },
-    idDocumentOriginalName: { type: String, required: true },
     indemnityAgreed: { type: Boolean, required: true, default: false },
   },
   {
