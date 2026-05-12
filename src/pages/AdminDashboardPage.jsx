@@ -2,6 +2,32 @@ import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import api from '../api'
 
+function formatDate(value) {
+  if (!value) {
+    return '-'
+  }
+
+  return new Intl.DateTimeFormat('en-IN', {
+    day: '2-digit',
+    month: 'short',
+    year: 'numeric',
+  }).format(new Date(value))
+}
+
+function formatDateTime(value) {
+  if (!value) {
+    return '-'
+  }
+
+  return new Intl.DateTimeFormat('en-IN', {
+    day: '2-digit',
+    month: 'short',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+  }).format(new Date(value))
+}
+
 function AdminDashboardPage() {
   const navigate = useNavigate()
   const [entries, setEntries] = useState([])
@@ -73,28 +99,32 @@ function AdminDashboardPage() {
             <thead>
               <tr>
                 <th>Name</th>
-                <th>Email</th>
+                <th>DOB</th>
                 <th>Mobile</th>
-                <th>Country</th>
+                <th>Parent Mobile</th>
+                <th>Email</th>
+                <th>School</th>
+                <th>City</th>
                 <th>State</th>
-                <th>District</th>
-                <th>Department</th>
-                <th>Level</th>
-                <th>Course</th>
+                <th>Class</th>
+                <th>Consent</th>
+                <th>Submitted</th>
               </tr>
             </thead>
             <tbody>
               {entries.map((entry) => (
                 <tr key={entry._id}>
                   <td>{entry.name}</td>
-                  <td>{entry.email}</td>
+                  <td>{formatDate(entry.dob)}</td>
                   <td>{entry.countryCode}{entry.mobile}</td>
-                  <td>{entry.country}</td>
+                  <td>{entry.parentMobile}</td>
+                  <td>{entry.email}</td>
+                  <td>{entry.schoolName}</td>
+                  <td>{entry.city}</td>
                   <td>{entry.state}</td>
-                  <td>{entry.district}</td>
-                  <td>{entry.department}</td>
-                  <td>{entry.level}</td>
-                  <td>{entry.course}</td>
+                  <td>{entry.studentClass}</td>
+                  <td>{entry.indemnityAgreed ? 'Yes' : 'No'}</td>
+                  <td>{formatDateTime(entry.createdAt)}</td>
                 </tr>
               ))}
             </tbody>
