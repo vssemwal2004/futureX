@@ -6,10 +6,11 @@ import FormEntry from '../models/FormEntry.js'
 import { requireAdminAuth } from '../middleware/adminAuth.js'
 
 const router = express.Router()
+const uploadsDir = path.join(process.cwd(), 'uploads')
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, 'uploads/')
+    cb(null, uploadsDir)
   },
   filename: (req, file, cb) => {
     const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9)
@@ -33,7 +34,27 @@ const upload = multer({
   limits: { fileSize: 1024 * 1024 } // 1 MB
 })
 
-router.post('/', upload.single('idDocument'), async (request, response) => {
+function handleUpload(request, response, next) {
+  upload.single('idDocument')(request, response, (error) => {
+    if (!error) {
+      next()
+      return
+    }
+
+    if (error instanceof multer.MulterError && error.code === 'LIMIT_FILE_SIZE') {
+      return response.status(400).json({ message: 'File size must be less than 1 MB.' })
+    }
+
+    if (error.message.includes('Only .jpg')) {
+      return response.status(400).json({ message: error.message })
+    }
+
+    console.error('File upload error:', error)
+    response.status(500).json({ message: 'File upload failed. Please try again.' })
+  })
+}
+
+router.post('/', handleUpload, async (request, response) => {
   try {
     const {
       name,
@@ -93,12 +114,6 @@ router.post('/', upload.single('idDocument'), async (request, response) => {
 
     response.status(201).json({ message: 'Registration submitted successfully.', entry })
   } catch (error) {
-    if (error.message.includes('file size')) {
-      return response.status(400).json({ message: 'File size must be less than 1 MB.' })
-    }
-    if (error.message.includes('Only .jpg')) {
-      return response.status(400).json({ message: error.message })
-    }
     console.error('Form submission error:', error)
     response.status(500).json({ message: 'Submission failed. Please try again.' })
   }

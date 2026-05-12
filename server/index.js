@@ -9,6 +9,7 @@ import formsRouter from './routes/forms.js'
 import otpRouter from './routes/otp.js'
 
 dotenv.config()
+dotenv.config({ path: path.join(process.cwd(), 'server', '.env') })
 
 const uploadsDir = path.join(process.cwd(), 'uploads')
 if (!fs.existsSync(uploadsDir)) {
