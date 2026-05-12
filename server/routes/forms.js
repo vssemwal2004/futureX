@@ -30,6 +30,30 @@ function isTrue(value) {
   return value === true || value === 'true'
 }
 
+function normalizeEmail(value) {
+  return cleanText(value).toLowerCase()
+}
+
+function normalizePhone(value) {
+  return cleanText(value).replace(/\D/g, '')
+}
+
+function getDuplicateMessage(error) {
+  if (error?.code !== 11000) {
+    return null
+  }
+
+  if (error.keyPattern?.email || error.keyValue?.email) {
+    return 'This email is already registered.'
+  }
+
+  if (error.keyPattern?.mobile || error.keyValue?.mobile) {
+    return 'This phone number is already registered.'
+  }
+
+  return 'This phone number or email is already registered.'
+}
+
 router.post('/', async (request, response) => {
   try {
     const form = Object.fromEntries(
@@ -55,14 +79,41 @@ router.post('/', async (request, response) => {
       return response.status(400).json({ message: 'OTP verification is required.' })
     }
 
+    const email = normalizeEmail(form.email)
+    const mobile = normalizePhone(form.mobile)
+    const parentMobile = normalizePhone(form.parentMobile)
+
+    const duplicateEntry = await FormEntry.findOne({
+      $or: [
+        { email },
+        { countryCode: form.countryCode, mobile },
+      ],
+    }).lean()
+
+    if (duplicateEntry) {
+      const duplicateFields = []
+
+      if (duplicateEntry.email === email) {
+        duplicateFields.push('email')
+      }
+
+      if (duplicateEntry.countryCode === form.countryCode && duplicateEntry.mobile === mobile) {
+        duplicateFields.push('phone number')
+      }
+
+      return response.status(409).json({
+        message: `This ${duplicateFields.join(' and ')} is already registered.`,
+      })
+    }
+
     const entry = await FormEntry.create({
       name: form.name,
       dob: new Date(form.dob),
-      mobile: form.mobile,
+      mobile,
       countryCode: form.countryCode,
       otpVerified: true,
-      parentMobile: form.parentMobile,
-      email: form.email,
+      parentMobile,
+      email,
       schoolName: form.schoolName,
       city: form.city,
       state: form.state,
@@ -72,6 +123,11 @@ router.post('/', async (request, response) => {
 
     response.status(201).json({ message: 'Registration submitted successfully.', entry })
   } catch (error) {
+    const duplicateMessage = getDuplicateMessage(error)
+    if (duplicateMessage) {
+      return response.status(409).json({ message: duplicateMessage })
+    }
+
     if (error.name === 'ValidationError') {
       return response.status(400).json({ message: 'Please complete all required fields correctly.' })
     }
