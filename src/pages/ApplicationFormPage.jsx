@@ -49,6 +49,7 @@ function ApplicationFormPage() {
   const [isVerifyingOtp, setIsVerifyingOtp] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [resendSeconds, setResendSeconds] = useState(0)
+  const [isSubmitted, setIsSubmitted] = useState(false)
 
   useEffect(() => {
     if (resendSeconds <= 0) {
@@ -158,6 +159,7 @@ function ApplicationFormPage() {
       })
 
       setSubmitMessage(response.data.message)
+      setIsSubmitted(true)
       setFormValues({
         name: '',
         dob: '',
@@ -251,11 +253,20 @@ function ApplicationFormPage() {
           {/* RIGHT SIDE - Form */}
           <div className="right-form">
             <div className="form-container">
-              <div className="form-header-right">
-                <h2>Register Now</h2>
-                <p>Secure your spot for this exclusive program</p>
-              </div>
-              <form className="registration-form-right" onSubmit={handleSubmit}>
+              {isSubmitted ? (
+                <div className="thank-you-panel">
+                  <div className="thank-you-mark">✓</div>
+                  <h2>Thank You</h2>
+                  <p>Your registration has been submitted successfully.</p>
+                  <span>We look forward to seeing you at Future X 3.0 Bootcamp.</span>
+                </div>
+              ) : (
+                <>
+                  <div className="form-header-right">
+                    <h2>Register Now</h2>
+                    <p>Secure your spot for this exclusive program</p>
+                  </div>
+                  <form className="registration-form-right" onSubmit={handleSubmit}>
               <div className="field-row full-width">
                 <label>
                   <input name="name" value={formValues.name} onChange={handleChange} type="text" placeholder="Name *" required />
@@ -395,7 +406,9 @@ function ApplicationFormPage() {
                   {isSubmitting ? 'Submitting...' : 'Complete Registration'}
                 </button>
               </div>
-            </form>
+                  </form>
+                </>
+              )}
             </div>
           </div>
 

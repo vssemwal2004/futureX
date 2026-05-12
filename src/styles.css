@@ -347,6 +347,49 @@ textarea {
   font-size: 0.8rem;
 }
 
+.thank-you-panel {
+  min-height: 360px;
+  display: grid;
+  place-items: center;
+  align-content: center;
+  gap: 12px;
+  padding: 36px 18px;
+  text-align: center;
+}
+
+.thank-you-mark {
+  display: grid;
+  place-items: center;
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  color: #ffffff;
+  background: #0d8a0d;
+  font-size: 2.5rem;
+  font-weight: 900;
+  box-shadow: 0 14px 28px rgba(13, 138, 13, 0.22);
+}
+
+.thank-you-panel h2 {
+  margin: 0;
+  color: #2146c7;
+  font-size: 1.55rem;
+  font-weight: 850;
+}
+
+.thank-you-panel p {
+  margin: 0;
+  color: #243557;
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.thank-you-panel span {
+  color: #6b7a94;
+  font-size: 0.88rem;
+  line-height: 1.5;
+}
+
 .registration-form-right {
   display: grid;
   gap: 6px;
