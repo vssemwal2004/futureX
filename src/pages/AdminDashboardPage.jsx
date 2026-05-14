@@ -106,6 +106,7 @@ function AdminDashboardPage() {
                 <th>School</th>
                 <th>City</th>
                 <th>State</th>
+                <th>Stream</th>
                 <th>Class</th>
                 <th>Consent</th>
                 <th>Submitted</th>
@@ -122,6 +123,7 @@ function AdminDashboardPage() {
                   <td>{entry.schoolName}</td>
                   <td>{entry.city}</td>
                   <td>{entry.state}</td>
+                  <td>{entry.stream || '-'}</td>
                   <td>{entry.studentClass}</td>
                   <td>{entry.indemnityAgreed ? 'Yes' : 'No'}</td>
                   <td>{formatDateTime(entry.createdAt)}</td>

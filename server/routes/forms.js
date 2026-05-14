@@ -15,6 +15,7 @@ const requiredFields = [
   ['schoolName', 'School name'],
   ['city', 'City'],
   ['state', 'State'],
+  ['stream', 'Stream'],
   ['studentClass', 'Class'],
 ]
 
@@ -117,6 +118,7 @@ router.post('/', async (request, response) => {
       schoolName: form.schoolName,
       city: form.city,
       state: form.state,
+      stream: form.stream,
       studentClass: form.studentClass,
       indemnityAgreed: true,
     })
@@ -161,6 +163,7 @@ router.get('/export', requireAdminAuth, async (_request, response) => {
       SchoolName: entry.schoolName,
       City: entry.city,
       State: entry.state,
+      Stream: entry.stream,
       Class: entry.studentClass,
       IndemnityAgreed: entry.indemnityAgreed ? 'Yes' : 'No',
       SubmittedAt: entry.createdAt,

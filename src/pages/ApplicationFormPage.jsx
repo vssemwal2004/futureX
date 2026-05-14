@@ -19,6 +19,13 @@ const classOptions = [
   { value: 'class11', label: 'Class 11' }
 ]
 
+const streamOptions = [
+  { value: 'PCM', label: 'PCM' },
+  { value: 'PCB', label: 'PCB' },
+  { value: 'Humanities', label: 'Humanities' },
+  { value: 'Commerce', label: 'Commerce' },
+]
+
 const resendCooldownSeconds = 120
 
 function formatSeconds(seconds) {
@@ -39,6 +46,7 @@ function ApplicationFormPage() {
     schoolName: '',
     city: '',
     state: '',
+    stream: '',
     studentClass: '',
     indemnityAgreed: false,
   })
@@ -150,6 +158,7 @@ function ApplicationFormPage() {
         schoolName: formValues.schoolName.trim(),
         city: formValues.city.trim(),
         state: formValues.state,
+        stream: formValues.stream,
         studentClass: formValues.studentClass,
         indemnityAgreed: formValues.indemnityAgreed,
       }
@@ -171,6 +180,7 @@ function ApplicationFormPage() {
         schoolName: '',
         city: '',
         state: '',
+        stream: '',
         studentClass: '',
         indemnityAgreed: false,
       })
@@ -363,6 +373,17 @@ function ApplicationFormPage() {
                     <option value="">Select State *</option>
                     {indianStates.map((state) => (
                       <option key={state} value={state}>{state}</option>
+                    ))}
+                  </select>
+                </label>
+              </div>
+
+              <div className="field-row full-width">
+                <label>
+                  <select name="stream" value={formValues.stream} onChange={handleChange} required>
+                    <option value="">Select Stream *</option>
+                    {streamOptions.map((stream) => (
+                      <option key={stream.value} value={stream.value}>{stream.label}</option>
                     ))}
                   </select>
                 </label>
